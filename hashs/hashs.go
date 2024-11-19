@@ -7,6 +7,7 @@ import (
 	"crypto/sha512"
 	"golang.org/x/crypto/ripemd160"
 	"golang.org/x/crypto/md4"
+	"golang.org/x/crypto/sha3"
 	"encoding/hex"
 	"fmt"
 	"hash"
@@ -45,6 +46,7 @@ func Hash(param, hashName string) (string, error) {
 		"sha512": sha512.New,
 		"ripemd160": ripemd160.New,
 		"md4": md4.New,
+		"sha3_224": sha3.New224,
 	}
 	hashFunc, exists := hashes[hashName]
 	if !exists {
