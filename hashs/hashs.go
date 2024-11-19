@@ -50,6 +50,7 @@ func Hash(param, hashName string) (string, error) {
 		"sha3_256": sha3.New256,
 		"sha3_384": sha3.New384,
 		"sha3_512": sha3.New512,
+		"sha512_256": sha512.New512_256,
 	}
 	hashFunc, exists := hashes[hashName]
 	if !exists {
