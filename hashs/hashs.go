@@ -39,6 +39,7 @@ func Hash(param, hashName string) (string, error) {
 		"sha1": sha1.New,
 		"sha224": sha256.New224,
 		"sha384": sha512.New384,
+		"sha512_224": sha512.New512_224,
 	}
 	hashFunc, exists := hashes[hashName]
 	if !exists {
