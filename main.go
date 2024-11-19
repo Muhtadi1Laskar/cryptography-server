@@ -8,7 +8,7 @@ import (
 func main() {
 	var message string = "Hello World"
 
-	hashedMsg, err := hashs.Hash(message, "sha1")
+	hashedMsg, err := hashs.Hash(message, "sha384")
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}
