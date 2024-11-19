@@ -5,13 +5,15 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
-	"golang.org/x/crypto/ripemd160"
-	"golang.org/x/crypto/md4"
-	"golang.org/x/crypto/sha3"
-	"golang.org/x/crypto/blake2s"
 	"encoding/hex"
 	"fmt"
 	"hash"
+
+	"golang.org/x/crypto/blake2b"
+	"golang.org/x/crypto/blake2s"
+	"golang.org/x/crypto/md4"
+	"golang.org/x/crypto/ripemd160"
+	"golang.org/x/crypto/sha3"
 )
 
 // func Hash(param, hashName string) (string, error) {
@@ -68,7 +70,12 @@ func Hash(param string, hashName string) (string, error) {
 		"blake2s_256": func() (hash.Hash, error) {
 			return blake2s.New256(nil) 
 		},
-		
+		"blake2b_256": func() (hash.Hash, error) {
+			return blake2b.New256(nil)
+		},
+		"blake2b_384": func() (hash.Hash, error) {
+			return blake2b.New384(nil)
+		},
 	}
 
 	hashFunc, exists := hashes[hashName]
