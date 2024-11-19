@@ -8,32 +8,11 @@ import (
 	"golang.org/x/crypto/ripemd160"
 	"golang.org/x/crypto/md4"
 	"golang.org/x/crypto/sha3"
+	"golang.org/x/crypto/blake2s"
 	"encoding/hex"
 	"fmt"
 	"hash"
 )
-
-type UnaryFunc func(int) int
-
-func Sha256(param string) string {
-	hash := sha256.New()
-	hash.Write([]byte(param))
-
-	hashedBytes := hash.Sum(nil)
-	encodedStr := hex.EncodeToString(hashedBytes)
-
-	return encodedStr
-}
-
-func Md5(param string) string {
-	hash := md5.New()
-	hash.Write([]byte(param))
-
-	hashedBytes := hash.Sum(nil)
-	encodedStr := hex.EncodeToString(hashedBytes)
-
-	return encodedStr
-}
 
 func Hash(param, hashName string) (string, error) {
 	hashes := map[string]func() hash.Hash {
