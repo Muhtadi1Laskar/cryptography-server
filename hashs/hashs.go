@@ -76,6 +76,9 @@ func Hash(param string, hashName string) (string, error) {
 		"blake2b_384": func() (hash.Hash, error) {
 			return blake2b.New384(nil)
 		},
+		"blake2b_512": func() (hash.Hash, error) {
+			return blake2b.New512(nil)
+		},
 	}
 
 	hashFunc, exists := hashes[hashName]
