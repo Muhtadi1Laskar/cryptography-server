@@ -1,109 +1,51 @@
 package main
 
 import (
-	"cryptographyServer/ciphers"
-	"cryptographyServer/hashs"
-	"encoding/json"
-	"fmt"
-	"github.com/gorilla/mux"
-	"io"
+	"cryptographyServer/routes"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-type RequestData struct {
-	Hash string `json:"hash"`
-	Data string `json:"data"`
-}
 
-type ResponseData struct {
-	Data   string `json:"Data"`
-	Status string `json:"status"`
-}
+// type CipherRequest struct {
+// 	Cipher string `json:"cipher"`
+// 	Type   string `json:"type"`
+// 	Key    string `json:"key"`
+// 	Data   string `json:"Data"`
+// }
 
-type HashList struct {
-	List []string `json:"list"`
-}
 
-type CipherRequest struct {
-	Cipher string `json:"cipher"`
-	Type   string `json:"type"`
-	Key    string `json:"key"`
-	Data   string `json:"Data"`
-}
+// func aesEncrypt(w http.ResponseWriter, r *http.Request) {
+// 	reqBody, err := io.ReadAll(r.Body)
+// 	if err != nil {
+// 		http.Error(w, "Unable to read the request body", http.StatusBadRequest)
+// 		return
+// 	}
+// 	defer r.Body.Close()
 
-func hashData(w http.ResponseWriter, r *http.Request) {
-	reqBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Unable to read request body", http.StatusBadRequest)
-		return
-	}
-	defer r.Body.Close()
+// 	var requestData CipherRequest
+// 	var responseBody ResponseData
+// 	if err := json.Unmarshal(reqBody, &requestData); err != nil {
+// 		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+// 	}
 
-	var requestData RequestData
-	var responseBody ResponseData
-	if err := json.Unmarshal(reqBody, &requestData); err != nil {
-		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
-		return
-	}
+// 	cipherText, err := authenticatedEncryption.Encrypt(requestData.Data, requestData.Key)
+// 	if err != nil {
+// 		responseBody = buildResponse(err.Error(), "Failed")
+// 	} else {
+// 		responseBody = buildResponse(cipherText, requestData.Type + " successful")
+// 	}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(responseBody)
+// }
 
-	hashedData, err := hashs.Hash(requestData.Data, requestData.Hash)
-	if err != nil {
-		responseBody = buildResponse(err.Error(), "Failed")
-	} else {
-		responseBody = buildResponse(hashedData, "Successfully hashed the data")
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(responseBody)
-}
-
-func showHashList(w http.ResponseWriter, r *http.Request) {
-	var list []string = hashs.GetHashList()
-	var response HashList = HashList{
-		List: list,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
-func aesEncrypt(w http.ResponseWriter, r *http.Request) {
-	reqBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Unable to read the request body", http.StatusBadRequest)
-		return
-	}
-	defer r.Body.Close()
-
-	var requestData CipherRequest
-	var responseBody ResponseData
-	if err := json.Unmarshal(reqBody, &requestData); err != nil {
-		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
-	}
-
-	cipherText, err := authenticatedEncryption.Encrypt(requestData.Data, requestData.Key)
-	if err != nil {
-		responseBody = buildResponse(err.Error(), "Failed")
-	} else {
-		responseBody = buildResponse(cipherText, requestData.Type + " successful")
-	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(responseBody)
-}
-
-func buildResponse(response string, status string) ResponseData {
-	return ResponseData{
-		Data: response,
-		Status: status,
-	}
-}
 
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/hashData", hashData).Methods("POST")
-	router.HandleFunc("/cipher/aes", aesEncrypt).Methods("POST")
-	router.HandleFunc("/getHashes", showHashList).Methods("GET")
+	routes.HashRoutes(router)
 
-	fmt.Printf("Server running on port 5000\n")
+	log.Println("Server running on http://localhost:500")
 	http.ListenAndServe(":5000", router)
 }
