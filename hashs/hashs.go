@@ -42,7 +42,7 @@ func GetHashList() []string {
 	hashes := getHashFunc()
 	var hashList []string
 
-	for key, _ := range hashes {
+	for key := range hashes {
 		hashList = append(hashList, key)
 	}
 
