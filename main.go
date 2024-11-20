@@ -28,21 +28,27 @@ func hashData (w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	var requestData RequestData
+	var response ResponseData
 	if err := json.Unmarshal(reqBody, &requestData); err != nil {
 		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
 		return 
 	}
 
-	hashedData, _ := hashs.Hash(requestData.Data, requestData.Hash);
-
-	response := ResponseData{
-		HashedData: hashedData,
-		Status: "Success",
+	hashedData, err := hashs.Hash(requestData.Data, requestData.Hash);
+	if err != nil {
+		response = ResponseData{
+			HashedData: err.Error(),
+			Status: "Failed",
+		}
+	} else {
+		response = ResponseData{
+			HashedData: hashedData,
+			Status: "Success",
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
-
 }
 
 
