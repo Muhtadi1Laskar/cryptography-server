@@ -38,6 +38,17 @@ func getHashFunc() map[string]func() (hash.Hash, error) {
 	}
 }
 
+func GetHashList() []string {
+	hashes := getHashFunc()
+	var hashList []string
+
+	for key, _ := range hashes {
+		hashList = append(hashList, key)
+	}
+
+	return hashList
+}
+
 func Hash(param string, hashName string) (string, error) {
 	hashes := getHashFunc()
 	hashFunc, exists := hashes[hashName]
