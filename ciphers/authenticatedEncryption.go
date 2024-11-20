@@ -32,3 +32,35 @@ func Encrypt(data, cipherKey string) (string, error) {
 
 	return hex.EncodeToString(cipherText), nil
 }
+
+func Decrypt(data, nonceHex, cipherKey string) (string, error) {
+	key, err := hex.DecodeString(cipherKey)
+	if err != nil {
+		return "", fmt.Errorf("invalid cipher key: %v", err)
+	}
+	cipherText, err := hex.DecodeString(data)
+	if err != nil {
+		return "", fmt.Errorf("invalid cipher text: %v", err)
+	}
+	nonce, err := hex.DecodeString(nonceHex)
+	if err != nil {
+		return "", fmt.Errorf("invalid Nonce: %v", err)
+	}
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", fmt.Errorf("failed to create cipher: %v", err)
+	}
+
+	aesgcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", fmt.Errorf("failed to create GCM: %v", err)
+	}
+
+	plaintText, err := aesgcm.Open(nil, nonce, cipherText, nil)
+	if err != nil {
+		return "", fmt.Errorf("decryption failed: %v", err)
+	}
+
+	return string(plaintText), nil
+}
