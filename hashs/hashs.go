@@ -40,7 +40,6 @@ func getHashFunc() map[string]func() (hash.Hash, error) {
 
 func Hash(param string, hashName string) (string, error) {
 	hashes := getHashFunc()
-
 	hashFunc, exists := hashes[hashName]
 	if !exists {
 		return "", fmt.Errorf("unsupported hash algorithm: %s", hashName)
