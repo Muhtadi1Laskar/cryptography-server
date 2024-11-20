@@ -18,6 +18,17 @@ type EncryptResponse struct {
 	Message string `json:"message"`
 }
 
+type DecryptRequest struct {
+	Cipher string `json:"cipher"`
+	Nonce string `json:"nonce"`
+	Key string `json:"key"`
+}
+
+type DecryptResponse struct {
+	Data string `json:"data"`
+	Message string `json:"message"`
+}
+
 type ErrorResponse struct {
 	Message string `json:"message"`
 }
@@ -33,6 +44,7 @@ func AesEncrypt(w http.ResponseWriter, r *http.Request) {
 	var requestBody EncryptRequest
 	if err := json.Unmarshal(reqBody, &requestBody); err != nil {
 		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		return
 	}
 
 	cipherText, nonce, err := authenticatedEncryption.Encrypt(requestBody.Data, requestBody.Key)
@@ -49,6 +61,38 @@ func AesEncrypt(w http.ResponseWriter, r *http.Request) {
 		Cipher: cipherText,
 		Nonce: nonce,
 		Message: "Successfully encrypted the message",
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseBody)
+}
+
+func AesDecrypt(w http.ResponseWriter, r *http.Request) {
+	reqBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Unable to read the request body", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	var requestBody DecryptRequest
+	if err := json.Unmarshal(reqBody, &requestBody); err != nil {
+		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		return
+	}
+
+	plainText, err := authenticatedEncryption.Decrypt(requestBody.Cipher, requestBody.Nonce, requestBody.Key)
+	if err != nil {
+		responseBody := ErrorResponse{
+			Message: err.Error(),
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseBody)
+		return
+	}
+
+	responseBody := DecryptResponse{
+		Data: plainText,
+		Message: "Successfully decrypted the message",
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseBody)
