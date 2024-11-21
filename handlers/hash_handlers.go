@@ -1,10 +1,8 @@
 package handlers
 
 import (
-	"io"
-	"net/http"
-	"encoding/json"
 	"cryptographyServer/hashs"
+	"net/http"
 )
 
 type RequestData struct {
@@ -22,29 +20,23 @@ type HashList struct {
 }
 
 func HashData(w http.ResponseWriter, r *http.Request) {
-	reqBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Unable to read request body", http.StatusBadRequest)
-		return
-	}
-	defer r.Body.Close()
-
-	var requestData RequestData
-	var responseBody ResponseData
-	if err := json.Unmarshal(reqBody, &requestData); err != nil {
-		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+	var requestBody RequestData
+	if err := readRequestBody(r, &requestBody); err != nil {
+		writeJSONResponse(w, http.StatusBadRequest, ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	hashedData, err := hashs.Hash(requestData.Data, requestData.Hash)
+	hashedData, err := hashs.Hash(requestBody.Data, requestBody.Hash)
 	if err != nil {
-		responseBody = buildResponse(err.Error(), "Failed")
-	} else {
-		responseBody = buildResponse(hashedData, "Successfully hashed the data")
+		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(responseBody)
+	responseBody := ResponseData{
+		Data: hashedData,
+		Status: "Successfully hashed the data",
+	}
+	writeJSONResponse(w, http.StatusOK, responseBody)
 }
 
 func ShowHashList(w http.ResponseWriter, r *http.Request) {
@@ -52,14 +44,6 @@ func ShowHashList(w http.ResponseWriter, r *http.Request) {
 	var response HashList = HashList{
 		List: list,
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	writeJSONResponse(w, http.StatusOK, response)
 }
 
-func buildResponse(response string, status string) ResponseData {
-	return ResponseData{
-		Data: response,
-		Status: status,
-	}
-}
