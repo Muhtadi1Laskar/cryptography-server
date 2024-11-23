@@ -11,6 +11,7 @@ func main() {
 	router := mux.NewRouter()
 	routes.HashRoutes(router)
 	routes.AesCipherRoutes(router)
+	routes.RsaRoutes(router)
 
 	log.Println("Server running on http://localhost:500")
 	http.ListenAndServe(":5000", router)

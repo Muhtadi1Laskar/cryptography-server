@@ -1,4 +1,4 @@
-package authenticatedEncryption
+package ciphers
 
 import (
 	"crypto/aes"
