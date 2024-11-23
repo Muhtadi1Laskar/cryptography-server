@@ -33,7 +33,7 @@ func HashData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responseBody := ResponseData{
-		Data: hashedData,
+		Data:   hashedData,
 		Status: "Successfully hashed the data",
 	}
 	writeJSONResponse(w, http.StatusOK, responseBody)
@@ -46,4 +46,3 @@ func ShowHashList(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSONResponse(w, http.StatusOK, response)
 }
-
