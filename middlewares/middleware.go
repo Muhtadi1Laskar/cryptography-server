@@ -3,7 +3,6 @@ package middlewares
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 )
@@ -16,8 +15,6 @@ func HandleEmptyJSON(next http.Handler) http.Handler {
 			http.Error(w, "Unable to read request body", http.StatusBadRequest)
 			return
 		}
-
-		fmt.Println(string(reqBody))
 
 		// Check if body is empty or only whitespace
 		if len(reqBody) == 0 || string(reqBody) == "{}" {

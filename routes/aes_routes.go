@@ -8,8 +8,7 @@ import (
 )
 
 func AesCipherRoutes(router *mux.Router) {
-	hashRouter := router.PathPrefix("/aes-cipher").Subrouter()
-	hashRouter.Use(middlewares.HandleEmptyJSON)
-	router.HandleFunc("/encrypt", handlers.AesEncrypt).Methods("POST")
-	router.HandleFunc("/decrypt", handlers.AesDecrypt).Methods("POST")
+	router.Use(middlewares.HandleEmptyJSON)
+	router.HandleFunc("/aes-cipher/encrypt", handlers.AesEncrypt).Methods("POST")
+	router.HandleFunc("/aes-cipher/decrypt", handlers.AesDecrypt).Methods("POST")
 }
