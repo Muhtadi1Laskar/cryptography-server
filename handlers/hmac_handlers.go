@@ -43,3 +43,23 @@ func SignMessage(w http.ResponseWriter, r *http.Request) {
 
 	writeJSONResponse(w, http.StatusOK, responseBody)
 }
+
+func VerifyMessage(w http.ResponseWriter, r *http.Request) {
+	var requestBody VerifyRequest
+	if err := readRequestBody(r, &requestBody); err != nil {
+		writeErrorResponse(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	isVerified, err := hashs.VerifySignature(requestBody.Message, requestBody.Key, requestBody.Hash)
+	if err != nil {
+		writeErrorResponse(w, http.StatusInternalServerError, err)
+		return 
+	}
+
+	responseBody := VerifyResponse{
+		IsAltered: isVerified,
+	}
+
+	writeJSONResponse(w, http.StatusOK, responseBody)
+}
