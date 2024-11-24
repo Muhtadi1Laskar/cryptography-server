@@ -20,10 +20,10 @@ func EncryptRSA(publicKey *rsa.PublicKey, plainText string) (string, error) {
 	hash := sha256.New()
 
 	cipherText, err := rsa.EncryptOAEP(
-		hash,              // Hash function
-		rand.Reader,       // Random source
-		publicKey,         // Public key
-		[]byte(plainText), // Message to encrypt
+		hash,             
+		rand.Reader,       
+		publicKey,        
+		[]byte(plainText), 
 		nil, 
 	)
 	if err != nil {
