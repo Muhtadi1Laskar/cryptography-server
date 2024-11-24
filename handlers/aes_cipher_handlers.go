@@ -6,8 +6,8 @@ import (
 )
 
 type EncryptRequest struct {
-	Key  string `json:"key"`
-	Data string `json:"data"`
+	Key  string `json:"key" validate:"required"`
+	Data string `json:"data" validate:"required"`
 }
 
 type EncryptResponse struct {
@@ -17,9 +17,9 @@ type EncryptResponse struct {
 }
 
 type DecryptRequest struct {
-	Cipher string `json:"cipher"`
-	Nonce  string `json:"nonce"`
-	Key    string `json:"key"`
+	Cipher string `json:"cipher" validate:"required"`
+	Nonce  string `json:"nonce" validate:"required"`
+	Key    string `json:"key" validate:"required"`
 }
 
 type DecryptResponse struct {
