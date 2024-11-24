@@ -6,8 +6,8 @@ import (
 )
 
 type RequestData struct {
-	Hash string `json:"hash"`
-	Data string `json:"data"`
+	Hash string `json:"hash" validate:"required"`
+	Data string `json:"data" validate:"required"`
 }
 
 type ResponseData struct {
@@ -21,6 +21,13 @@ type HashList struct {
 
 func HashData(w http.ResponseWriter, r *http.Request) {
 	var requestBody RequestData
+
+	// err := validateRequestBody(r, &requestBody)
+	// if err != nil{
+	// 	writeErrorResponse(w, http.StatusInternalServerError, err)
+	// 	return
+	// }
+
 	if err := readRequestBody(r, &requestBody); err != nil {
 		writeErrorResponse(w, http.StatusInternalServerError, err)
 		return

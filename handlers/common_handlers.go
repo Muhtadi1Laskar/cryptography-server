@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func readRequestBody(r *http.Request, target interface{}) error {
@@ -16,6 +18,13 @@ func readRequestBody(r *http.Request, target interface{}) error {
 
 	if err := json.Unmarshal(reqBody, target); err != nil {
 		return fmt.Errorf("invalid JSON format: %v", err)
+	}
+
+	validate := validator.New()
+	
+	err = validate.Struct(target)
+	if err != nil {
+		return fmt.Errorf("validation error: %w", err)
 	}
 	return nil
 }
