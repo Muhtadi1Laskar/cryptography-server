@@ -21,13 +21,6 @@ type HashList struct {
 
 func HashData(w http.ResponseWriter, r *http.Request) {
 	var requestBody RequestData
-
-	// err := validateRequestBody(r, &requestBody)
-	// if err != nil{
-	// 	writeErrorResponse(w, http.StatusInternalServerError, err)
-	// 	return
-	// }
-
 	if err := readRequestBody(r, &requestBody); err != nil {
 		writeErrorResponse(w, http.StatusInternalServerError, err)
 		return
