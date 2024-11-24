@@ -10,6 +10,16 @@ type HMACRequest struct {
 	Key string `json:"key"`
 }
 
+type VerifyRequest struct {
+	Message string `json:"message"`
+	Key string `json:"key"`
+	Hash string `json:"hash"`
+}
+
+type VerifyResponse struct {
+	IsAltered bool `json:"isaltered"`
+}
+
 type HMACResponse struct {
 	Hash string `json:"hash"`
 }
