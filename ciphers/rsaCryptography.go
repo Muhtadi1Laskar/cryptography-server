@@ -33,3 +33,24 @@ func EncryptRSA(publicKey *rsa.PublicKey, plainText string) (string, error) {
 	return base64.StdEncoding.EncodeToString(cipherText), nil
 }
 
+func DecryptRSA(privateKey *rsa.PrivateKey, cipherText string) (string, error) {
+	cipherBytes, err := base64.StdEncoding.DecodeString(cipherText)
+	if err != nil {
+		return "", fmt.Errorf("error decoding cipherText: %v", err)
+	}
+	hash := sha256.New()
+
+	plaintText, err := rsa.DecryptOAEP(
+		hash,
+		rand.Reader, 
+		privateKey,
+		cipherBytes,
+		nil,
+	)
+	if err != nil {
+		return "", fmt.Errorf("error decrypting data: %v", err)
+	}
+
+	return string(plaintText), nil
+}
+
