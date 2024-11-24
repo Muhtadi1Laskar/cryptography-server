@@ -7,16 +7,16 @@ import (
 
 type KeyResponseBody struct {
 	PrivateKey string `json:"privateKey"`
-	PublicKey  string  `json:"publicKey"`
+	PublicKey  string `json:"publicKey"`
 }
 
 type RsaEncryptRequest struct {
-	PlainText string         `json:"plaintext"`
+	PlainText string `json:"plaintext"`
 	PublicKey string `json:"publickey"`
 }
 
 type RsaDecryptRequest struct {
-	CipherText string          `json:"ciphertext"`
+	CipherText string `json:"ciphertext"`
 	PrivateKey string `json:"privatekey"`
 }
 
