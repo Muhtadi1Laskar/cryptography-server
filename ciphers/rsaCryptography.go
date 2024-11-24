@@ -7,6 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
+	"errors"
 	"fmt"
 )
 
@@ -70,4 +71,16 @@ func PublicKeyToPEM(publicKey *rsa.PublicKey) string {
 		Type: "RSA PUBLIC KEY",
 		Bytes: publicKeyBytes,
 	}))
+}
+
+func PEMToPrivateKey(privateKeyPEM string) (*rsa.PrivateKey, error) {
+	block, _ := pem.Decode([]byte(privateKeyPEM))
+	if block == nil || block.Type != "RSA PRIVATE KEY" {
+		return nil, errors.New("invalid private key PEM")
+	}
+	piv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	return piv, nil
 }

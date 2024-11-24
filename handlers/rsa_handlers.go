@@ -8,17 +8,17 @@ import (
 )
 
 type KeyResponseBody struct {
-	PrivateKey *rsa.PrivateKey `json:"privateKey"`
-	PublicKey *rsa.PublicKey `json:"publicKey"` 
+	PrivateKey string `json:"privateKey"`
+	PublicKey  string  `json:"publicKey"`
 }
 
 type RsaEncryptRequest struct {
-	PlainText string `json:"plaintext"`
+	PlainText string         `json:"plaintext"`
 	PublicKey *rsa.PublicKey `json:"publickey"`
 }
 
 type RsaDecryptRequest struct {
-	CipherText string `json:"ciphertext"`
+	CipherText string          `json:"ciphertext"`
 	PrivateKey *rsa.PrivateKey `json:"privatekey"`
 }
 
@@ -33,12 +33,18 @@ type RsaDecryptResponse struct {
 func GenerateKeys(w http.ResponseWriter, r *http.Request) {
 	privateKey, publicKey, err := ciphers.GenerateKeys()
 	if err != nil {
-		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
+			Message: err.Error(),
+		})
 		return
 	}
+
+	privateKeyPEM := ciphers.PrivateKeyToPEM(privateKey)
+	publicKeyPEM := ciphers.PublicKeyToPEM(publicKey)
+
 	var response KeyResponseBody = KeyResponseBody{
-		PrivateKey: privateKey,
-		PublicKey: publicKey,
+		PrivateKey: privateKeyPEM,
+		PublicKey:  publicKeyPEM,
 	}
 	writeJSONResponse(w, http.StatusOK, response)
 }
@@ -46,13 +52,17 @@ func GenerateKeys(w http.ResponseWriter, r *http.Request) {
 func RSAEncryptMessage(w http.ResponseWriter, r *http.Request) {
 	var requestBody RsaEncryptRequest
 	if err := readRequestBody(r, &requestBody); err != nil {
-		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
+			Message: err.Error(),
+		})
 		return
 	}
 
 	cipherText, err := ciphers.EncryptRSA(requestBody.PublicKey, requestBody.PlainText)
 	if err != nil {
-		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
+			Message: err.Error(),
+		})
 		return
 	}
 	responseBody := RsaEncryptResponse{
@@ -64,17 +74,21 @@ func RSAEncryptMessage(w http.ResponseWriter, r *http.Request) {
 func RSADecryptMessage(w http.ResponseWriter, r *http.Request) {
 	var requestBody RsaDecryptRequest
 	if err := readRequestBody(r, &requestBody); err != nil {
-		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
+			Message: err.Error(),
+		})
 		return
 	}
 
 	fmt.Println(requestBody.PrivateKey)
 	fmt.Println()
 	fmt.Println(requestBody.CipherText)
-	
+
 	plainText, err := ciphers.DecryptRSA(requestBody.PrivateKey, requestBody.CipherText)
 	if err != nil {
-		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
+			Message: err.Error(),
+		})
 		return
 	}
 	fmt.Println("Plain Text: ", plainText)
