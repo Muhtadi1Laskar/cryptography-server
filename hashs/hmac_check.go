@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-func CreateSignatur(message, key string) (string, error) {
+func CreateSignature(message, key string) (string, error) {
 	keyBytes := []byte(key)
 	mac := hmac.New(sha256.New, keyBytes)
 
