@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"cryptographyServer/ciphers"
-	"net/http"
 	"crypto/rsa"
+	"cryptographyServer/ciphers"
+	"fmt"
+	"net/http"
 )
 
 type KeyResponseBody struct {
@@ -66,12 +67,18 @@ func RSADecryptMessage(w http.ResponseWriter, r *http.Request) {
 		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 		return
 	}
+
+	fmt.Println(requestBody.PrivateKey)
+	fmt.Println()
+	fmt.Println(requestBody.CipherText)
 	
 	plainText, err := ciphers.DecryptRSA(requestBody.PrivateKey, requestBody.CipherText)
 	if err != nil {
 		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 		return
 	}
+	fmt.Println("Plain Text: ", plainText)
+
 	responseBody := RsaDecryptResponse{
 		PlaintText: plainText,
 	}

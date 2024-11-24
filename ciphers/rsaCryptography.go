@@ -3,8 +3,10 @@ package ciphers
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"encoding/base64"
 	"crypto/sha256"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/pem"
 	"fmt"
 )
 
@@ -36,21 +38,28 @@ func EncryptRSA(publicKey *rsa.PublicKey, plainText string) (string, error) {
 func DecryptRSA(privateKey *rsa.PrivateKey, cipherText string) (string, error) {
 	cipherBytes, err := base64.StdEncoding.DecodeString(cipherText)
 	if err != nil {
-		return "", fmt.Errorf("error decoding cipherText: %v", err)
+		return "", fmt.Errorf("error decoding ciphertext: %v", err)
 	}
 	hash := sha256.New()
 
-	plaintText, err := rsa.DecryptOAEP(
-		hash,
-		rand.Reader, 
-		privateKey,
-		cipherBytes,
-		nil,
+	plainText, err := rsa.DecryptOAEP(
+		hash,          
+		rand.Reader,   
+		privateKey,     
+		cipherBytes,    
+		nil,            
 	)
 	if err != nil {
 		return "", fmt.Errorf("error decrypting data: %v", err)
 	}
 
-	return string(plaintText), nil
+	return string(plainText), nil
 }
 
+func PrivateKeyToPEM(privateKey *rsa.PrivateKey) string {
+	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
+	return string(pem.EncodeToMemory(&pem.Block{
+		Type: "RSA PRIVATE KEY",
+		Bytes: privateKeyBytes,
+	}))
+}

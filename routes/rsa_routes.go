@@ -9,4 +9,5 @@ import (
 func RsaRoutes(router *mux.Router) {
 	router.HandleFunc("/rsa/get-keys", handlers.GenerateKeys).Methods("GET")
 	router.HandleFunc("/rsa/encrypt", handlers.RSAEncryptMessage).Methods("POST")
+	router.HandleFunc("/rsa/decrypt", handlers.RSADecryptMessage).Methods("POST")
 }
