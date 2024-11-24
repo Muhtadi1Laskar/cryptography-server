@@ -22,7 +22,7 @@ func GenerateKeys() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 func EncryptRSA(publicKey *rsa.PublicKey, plainText string) (string, error) {
 	hash := sha256.New()
 
-	cipherText, err := rsa.EncryptOAEP(
+	cipherBytes, err := rsa.EncryptOAEP(
 		hash,             
 		rand.Reader,       
 		publicKey,        
@@ -33,7 +33,7 @@ func EncryptRSA(publicKey *rsa.PublicKey, plainText string) (string, error) {
 		return "", fmt.Errorf("errof encrypting data: %v", err)
 	}
 
-	return base64.StdEncoding.EncodeToString(cipherText), nil
+	return base64.StdEncoding.EncodeToString(cipherBytes), nil
 }
 
 func DecryptRSA(privateKey *rsa.PrivateKey, cipherText string) (string, error) {
@@ -53,20 +53,20 @@ func DecryptRSA(privateKey *rsa.PrivateKey, cipherText string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error decrypting data: %v", err)
 	}
-
+	fmt.Println("Result: ", plainText)
 	return string(plainText), nil
 }
 
 func PrivateKeyToPEM(privateKey *rsa.PrivateKey) string {
 	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
 	return string(pem.EncodeToMemory(&pem.Block{
-		Type: "RSA PRIVATE KEY",
+		Type: "RSA PRIVATE KEY", 
 		Bytes: privateKeyBytes,
 	}))
 }
 
 func PublicKeyToPEM(publicKey *rsa.PublicKey) string {
-	publicKeyBytes := x509.MarshalPKCS1PublicKey(publicKey)
+	publicKeyBytes, _ := x509.MarshalPKIXPublicKey(publicKey)
 	return string(pem.EncodeToMemory(&pem.Block{
 		Type: "RSA PUBLIC KEY",
 		Bytes: publicKeyBytes,
@@ -83,4 +83,16 @@ func PEMToPrivateKey(privateKeyPEM string) (*rsa.PrivateKey, error) {
 		return nil, err
 	}
 	return piv, nil
+}
+
+func PEMToPublicKey(publicKeyPEM string) (*rsa.PublicKey, error) {
+	block, _ := pem.Decode([]byte(publicKeyPEM))
+	if block == nil || block.Type != "RSA PUBLIC KEY" {
+		return nil, errors.New("invalid public key PEM")
+	}
+	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	return pub.(*rsa.PublicKey), nil
 }

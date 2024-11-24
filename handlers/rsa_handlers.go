@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"crypto/rsa"
 	"cryptographyServer/ciphers"
 	"fmt"
 	"net/http"
@@ -14,12 +13,12 @@ type KeyResponseBody struct {
 
 type RsaEncryptRequest struct {
 	PlainText string         `json:"plaintext"`
-	PublicKey *rsa.PublicKey `json:"publickey"`
+	PublicKey string `json:"publickey"`
 }
 
 type RsaDecryptRequest struct {
 	CipherText string          `json:"ciphertext"`
-	PrivateKey *rsa.PrivateKey `json:"privatekey"`
+	PrivateKey string `json:"privatekey"`
 }
 
 type RsaEncryptResponse struct {
@@ -46,6 +45,8 @@ func GenerateKeys(w http.ResponseWriter, r *http.Request) {
 		PrivateKey: privateKeyPEM,
 		PublicKey:  publicKeyPEM,
 	}
+	fmt.Println("Private Key: ", privateKey)
+	fmt.Println()
 	writeJSONResponse(w, http.StatusOK, response)
 }
 
@@ -58,7 +59,15 @@ func RSAEncryptMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cipherText, err := ciphers.EncryptRSA(requestBody.PublicKey, requestBody.PlainText)
+	publicKey, err := ciphers.PEMToPublicKey(requestBody.PublicKey)
+	if err != nil {
+		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	cipherText, err := ciphers.EncryptRSA(publicKey, requestBody.PlainText)
 	if err != nil {
 		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
 			Message: err.Error(),
@@ -80,11 +89,15 @@ func RSADecryptMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(requestBody.PrivateKey)
-	fmt.Println()
-	fmt.Println(requestBody.CipherText)
+	privateKey, err := ciphers.PEMToPrivateKey(requestBody.PrivateKey)
+	if err != nil {
+		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
 
-	plainText, err := ciphers.DecryptRSA(requestBody.PrivateKey, requestBody.CipherText)
+	plainText, err := ciphers.DecryptRSA(privateKey, requestBody.CipherText)
 	if err != nil {
 		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{
 			Message: err.Error(),
