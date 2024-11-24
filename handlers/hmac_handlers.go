@@ -6,14 +6,14 @@ import (
 )
 
 type HMACRequest struct {
-	Message string `json:"message"`
-	Key string `json:"key"`
+	Message string `json:"message" validate:"required"`
+	Key string `json:"key" validate:"required"`
 }
 
 type VerifyRequest struct {
-	Message string `json:"message"`
-	Key string `json:"key"`
-	Hash string `json:"hash"`
+	Message string `json:"message" validate:"required"`
+	Key string `json:"key" validate:"required"`
+	Hash string `json:"hash" validate:"required"`
 }
 
 type VerifyResponse struct {

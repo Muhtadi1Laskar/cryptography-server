@@ -11,13 +11,13 @@ type KeyResponseBody struct {
 }
 
 type RsaEncryptRequest struct {
-	PlainText string `json:"plaintext"`
-	PublicKey string `json:"publickey"`
+	PlainText string `json:"plaintext" validate:"required"`
+	PublicKey string `json:"publickey" validate:"required"`
 }
 
 type RsaDecryptRequest struct {
-	CipherText string `json:"ciphertext"`
-	PrivateKey string `json:"privatekey"`
+	CipherText string `json:"ciphertext" validate:"required"`
+	PrivateKey string `json:"privatekey" validate:"required"`
 }
 
 type RsaEncryptResponse struct {
