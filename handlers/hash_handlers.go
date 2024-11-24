@@ -22,13 +22,13 @@ type HashList struct {
 func HashData(w http.ResponseWriter, r *http.Request) {
 	var requestBody RequestData
 	if err := readRequestBody(r, &requestBody); err != nil {
-		writeJSONResponse(w, http.StatusBadRequest, ErrorResponse{Message: err.Error()})
+		writeErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	hashedData, err := hashs.Hash(requestBody.Data, requestBody.Hash)
 	if err != nil {
-		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		writeErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 

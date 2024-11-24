@@ -53,7 +53,7 @@ func DecryptRSA(privateKey *rsa.PrivateKey, cipherText string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error decrypting data: %v", err)
 	}
-	fmt.Println("Result: ", plainText)
+	
 	return string(plainText), nil
 }
 

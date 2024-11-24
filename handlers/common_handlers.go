@@ -25,3 +25,9 @@ func writeJSONResponse(w http.ResponseWriter, statusCode int, response interface
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(response)
 }
+
+func writeErrorResponse(w http.ResponseWriter, statusCode int, err error) {
+	writeJSONResponse(w,statusCode, ErrorResponse{
+		Message: err.Error(),
+	})
+}

@@ -34,13 +34,13 @@ type ErrorResponse struct {
 func AesEncrypt(w http.ResponseWriter, r *http.Request) {
 	var requestBody EncryptRequest
 	if err := readRequestBody(r, &requestBody); err != nil {
-		writeJSONResponse(w, http.StatusBadRequest, ErrorResponse{Message: err.Error()})
+		writeErrorResponse(w, http.StatusBadRequest, err)
 		return
 	}
 
 	cipherText, nonce, err := authenticatedEncryption.Encrypt(requestBody.Data, requestBody.Key)
 	if err != nil {
-		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		writeErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -55,13 +55,13 @@ func AesEncrypt(w http.ResponseWriter, r *http.Request) {
 func AesDecrypt(w http.ResponseWriter, r *http.Request) {
 	var requestBody DecryptRequest
 	if err := readRequestBody(r, &requestBody); err != nil {
-		writeJSONResponse(w, http.StatusBadRequest, ErrorResponse{Message: err.Error()})
+		writeErrorResponse(w, http.StatusBadRequest, err)
 		return
 	}
 
 	plainText, err := authenticatedEncryption.Decrypt(requestBody.Cipher, requestBody.Nonce, requestBody.Key)
 	if err != nil {
-		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		writeErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 
