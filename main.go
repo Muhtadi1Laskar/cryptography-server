@@ -12,6 +12,7 @@ func main() {
 	routes.HashRoutes(router)
 	routes.AesCipherRoutes(router)
 	routes.RsaRoutes(router)
+	routes.HMACRoutes(router)
 
 	log.Println("Server running on http://localhost:500")
 	http.ListenAndServe(":5000", router)

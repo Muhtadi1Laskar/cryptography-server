@@ -16,7 +16,7 @@ type HMACResponse struct {
 
 func SignMessage(w http.ResponseWriter, r *http.Request) {
 	var requestBody HMACRequest
-	if err := readRequestBody(r, requestBody); err != nil {
+	if err := readRequestBody(r, &requestBody); err != nil {
 		writeErrorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
