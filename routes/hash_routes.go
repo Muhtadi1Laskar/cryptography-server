@@ -8,9 +8,7 @@ import (
 )
 
 func HashRoutes(router *mux.Router) {
-	hashRouter := router.PathPrefix("/hash").Subrouter()
-	hashRouter.Use(middlewares.HandleEmptyJSON)
-	hashRouter.HandleFunc("", handlers.HashData).Methods("POST")
-
 	router.HandleFunc("/hash-list", handlers.ShowHashList).Methods("GET")
+	router.Use(middlewares.HandleEmptyJSON)
+	router.HandleFunc("/hash", handlers.HashData).Methods("POST")
 }
