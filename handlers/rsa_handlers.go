@@ -33,7 +33,7 @@ func GenerateKeys(w http.ResponseWriter, r *http.Request) {
 	writeJSONResponse(w, http.StatusOK, response)
 }
 
-func EncryptMessage(w http.ResponseWriter, r *http.Request) {
+func RSAEncryptMessage(w http.ResponseWriter, r *http.Request) {
 	var requestBody RsaEncryptRequest
 	if err := readRequestBody(r, &requestBody); err != nil {
 		writeJSONResponse(w, http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
