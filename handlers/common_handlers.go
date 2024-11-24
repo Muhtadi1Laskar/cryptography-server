@@ -31,13 +31,3 @@ func writeErrorResponse(w http.ResponseWriter, statusCode int, err error) {
 		Message: err.Error(),
 	})
 }
-
-func HandleEmptyJSON(w http.ResponseWriter, r *http.Request) {
-	var body map[string]interface{}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || len(body) == 0 {
-		http.Error(w, "Request body cannot be empty", http.StatusBadRequest)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "Valid JSON")
-}
