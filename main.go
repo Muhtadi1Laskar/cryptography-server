@@ -14,6 +14,6 @@ func main() {
 	routes.RsaRoutes(router)
 	routes.HMACRoutes(router)
 
-	log.Println("Server running on http://localhost:500")
+	log.Println("Server running on http://localhost:5000")
 	http.ListenAndServe(":5000", router)
 }
