@@ -7,5 +7,5 @@ import (
 )
 
 func RsaRoutes(router *mux.Router) {
-	router.HandleFunc("/get-keys", handlers.GenerateKeys).Methods("GET")
+	router.HandleFunc("rsa/get-keys", handlers.GenerateKeys).Methods("GET")
 }
