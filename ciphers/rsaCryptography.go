@@ -63,3 +63,11 @@ func PrivateKeyToPEM(privateKey *rsa.PrivateKey) string {
 		Bytes: privateKeyBytes,
 	}))
 }
+
+func PublicKeyToPEM(publicKey *rsa.PublicKey) string {
+	publicKeyBytes := x509.MarshalPKCS1PublicKey(publicKey)
+	return string(pem.EncodeToMemory(&pem.Block{
+		Type: "RSA PUBLIC KEY",
+		Bytes: publicKeyBytes,
+	}))
+}
